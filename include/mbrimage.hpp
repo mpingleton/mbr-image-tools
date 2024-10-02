@@ -39,11 +39,11 @@ public:
 	uint32_t address;
 
 	SectorAddress();
+	SectorAddress(uint32_t lba);
+	SectorAddress(DriveGeometry g, uint32_t c, uint32_t h, uint32_t s);
 	~SectorAddress();
 
-	void setFromCHS(DriveGeometry g, uint32_t c, uint32_t h, uint32_t s);
 	uint32_t getCylinder(DriveGeometry g);
-	uint32_t getTrack(DriveGeometry g);
 	uint32_t getHead(DriveGeometry g);
 	uint32_t getSector(DriveGeometry g);
 	std::string toInfoString();
