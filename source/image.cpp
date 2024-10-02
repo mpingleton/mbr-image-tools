@@ -20,26 +20,64 @@ MbrDiskImage::MbrDiskImage()
 {
 	pBuffer = NULL;
 	bufferSize = 0;
-	cursorPosition = 0;
 	geometry = DriveGeometry();
 }
 
 MbrDiskImage::~MbrDiskImage()
 {
-	if (bufferSize > 0)
+	if (isSelfAllocated)
 	{
 		delete[] pBuffer;
 		bufferSize = 0;
+		isSelfAllocated = false;
 	}
 	
-	cursorPosition = 0;
 	geometry.~DriveGeometry();
 	partitions.clear();
+}
+
+void MbrDiskImage::initBuffer()
+{
+	if (isSelfAllocated) delete[] pBuffer;
+
+	bufferSize = geometry.totalBytes();
+	isSelfAllocated = true;
+	pBuffer = new uint8_t[bufferSize]();
+}
+
+void MbrDiskImage::r(MbrSector* pSector)
+{
+	if (pSector->bufferSize != geometry.bytes) throw 1;
+
+	for (int i = 0; i < geometry.bytes; i++) pSector->pBuffer[i] = pBuffer[pSector->address.address + i];
+}
+
+void MbrDiskImage::w(MbrSector* pSector)
+{
+	if (pSector->bufferSize != geometry.bytes) throw 1;
+
+	for (int i = 0; i < geometry.bytes; i++) pBuffer[pSector->address.address + i] = pSector->pBuffer[i];
+}
+
+bool MbrDiskImage::isBootable()
+{
+	MbrSector s = MbrSector();
+	s.initBuffer(geometry);
+	s.address.address = 0;
+
+	r(&s);
+
+	return s.isBootSector();
 }
 
 string MbrDiskImage::toInfoString()
 {
 	string tmp = "Disk image: (";
+
+	tmp.append("Bootable: ");
+	if (isBootable()) tmp.append("Yes");
+	else tmp.append("No");
+	tmp.append("; ");
 
 	tmp.append("Drive size (bytes): ");
 	tmp.append(to_string(geometry.totalBytes()));

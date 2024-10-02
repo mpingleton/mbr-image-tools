@@ -18,19 +18,32 @@ using namespace std;
 
 MbrSector::MbrSector()
 {
-	address = SectorAddress();
 	pBuffer = NULL;
 	bufferSize = 0;
+	isSelfAllocated = false;
+
+	address = SectorAddress();	
 }
 
 MbrSector::~MbrSector()
 {
-	address.~SectorAddress();
-	if (bufferSize > 0)
+	if (isSelfAllocated)
 	{
 		delete[] pBuffer;
 		bufferSize = 0;
+		isSelfAllocated = false;
 	}
+
+	address.~SectorAddress();
+}
+
+void MbrSector::initBuffer(DriveGeometry g)
+{
+	if (isSelfAllocated) delete[] pBuffer;
+	
+	bufferSize = g.bytes;
+	isSelfAllocated = true;
+	pBuffer = new uint8_t[bufferSize]();
 }
 
 bool MbrSector::isBootSector()

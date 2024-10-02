@@ -35,6 +35,18 @@ int main(int argc, char** argv)
 	diskImage.geometry.heads = 2;
 	diskImage.geometry.cylinders = 80;
 
+	diskImage.initBuffer();
+
+	// Get the first sector, make it bootable.	
+	MbrSector sector = MbrSector();
+	sector.address = SectorAddress(0);
+	sector.initBuffer(diskImage.geometry);
+
+	diskImage.r(&sector);
+	sector.pBuffer[510] = 0x55;
+	sector.pBuffer[511] = 0xAA;
+	diskImage.w(&sector);
+
 	cout << diskImage.toInfoString() << endl;
 
 	return 0;

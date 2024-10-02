@@ -30,6 +30,12 @@ MbrPartition::~MbrPartition()
 	sectors = 0;
 }
 
+SectorAddress MbrPartition::absoluteAddress(uint32_t i)
+{
+	SectorAddress a = SectorAddress(begin.address + i);
+	return a;
+}
+
 string MbrPartition::toInfoString()
 {
 	string tmp = "Partition entry: (";

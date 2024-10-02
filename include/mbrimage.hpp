@@ -51,15 +51,18 @@ public:
 
 class MbrSector
 {
-	SectorAddress address;
+public:
 	uint8_t* pBuffer;
 	int64_t bufferSize;
+	bool isSelfAllocated;
+
+	SectorAddress address;
 
 	MbrSector();
 	~MbrSector();
 
+	void initBuffer(DriveGeometry g);
 	bool isBootSector();
-
 	std::string toInfoString();
 };
 
@@ -73,6 +76,7 @@ public:
 	MbrPartition();
 	~MbrPartition();
 
+	SectorAddress absoluteAddress(uint32_t i);
 	std::string toInfoString();
 };
 
@@ -81,13 +85,18 @@ class MbrDiskImage
 public:
 	uint8_t* pBuffer;
 	int64_t bufferSize;
-	int64_t cursorPosition;
+	bool isSelfAllocated;
+
 	DriveGeometry geometry;
 	std::vector<MbrPartition> partitions;
 
 	MbrDiskImage();
 	~MbrDiskImage();
 
+	void initBuffer();
+	void r(MbrSector* pSector);
+	void w(MbrSector* pSector);
+	bool isBootable();
 	std::string toInfoString();
 };
 
