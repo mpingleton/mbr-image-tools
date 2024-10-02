@@ -36,6 +36,11 @@ SectorAddress::~SectorAddress()
 	address = 0;
 }
 
+uint32_t SectorAddress::getLBA()
+{
+	return address;
+}
+
 uint32_t SectorAddress::getCylinder(DriveGeometry g)
 {
 	return address / (g.heads * g.sectors);

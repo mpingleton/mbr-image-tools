@@ -43,6 +43,7 @@ public:
 	SectorAddress(DriveGeometry g, uint32_t c, uint32_t h, uint32_t s);
 	~SectorAddress();
 
+	uint32_t getLBA();
 	uint32_t getCylinder(DriveGeometry g);
 	uint32_t getHead(DriveGeometry g);
 	uint32_t getSector(DriveGeometry g);
