@@ -33,6 +33,13 @@ MbrSector::~MbrSector()
 	}
 }
 
+bool MbrSector::isBootSector()
+{
+	if (bufferSize <= 0) throw 1;
+
+	return (pBuffer[510] == 0x55 && pBuffer[511] == 0xAA);
+}
+
 string MbrSector::toInfoString()
 {
 	string tmp = "Sector: (";

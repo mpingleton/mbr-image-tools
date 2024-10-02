@@ -58,6 +58,8 @@ class MbrSector
 	MbrSector();
 	~MbrSector();
 
+	bool isBootSector();
+
 	std::string toInfoString();
 };
 
