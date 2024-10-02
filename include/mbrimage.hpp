@@ -12,36 +12,51 @@
 #ifndef MBR_IMAGE_HPP
 #define MBR_IMAGE_HPP
 
+#include <stdint.h>
 #include <string>
+#include <vector>
 
 class DriveGeometry
 {
 public:
-	int bytes;
-	int sectors;
-	int heads;
-	int cylinders;
+	uint32_t bytes;
+	uint32_t sectors;
+	uint32_t heads;
+	uint32_t cylinders;
 
+	DriveGeometry();
+	~DriveGeometry();
+
+	uint32_t totalBytes();
+	uint32_t totalSectors();
+	uint32_t totalTracks();
 	std::string toInfoString();
 };
 
 class SectorAddress
 {
 public:
-	int address;
+	uint32_t address;
 
-	void setFromCHS(DriveGeometry g, int c, int h, int s);
-	int getCylinder(DriveGeometry g);
-	int getHead(DriveNumber g);
-	int getSector(DriveNumber g);
+	SectorAddress();
+	~SectorAddress();
+
+	void setFromCHS(DriveGeometry g, uint32_t c, uint32_t h, uint32_t s);
+	uint32_t getCylinder(DriveGeometry g);
+	uint32_t getTrack(DriveGeometry g);
+	uint32_t getHead(DriveGeometry g);
+	uint32_t getSector(DriveGeometry g);
 	std::string toInfoString();
 };
 
 class MbrSector
 {
 	SectorAddress address;
-	char* pBuffer;
-	int bufferSize;
+	uint8_t* pBuffer;
+	int64_t bufferSize;
+
+	MbrSector();
+	~MbrSector();
 
 	std::string toInfoString();
 };
@@ -51,7 +66,10 @@ class MbrPartition
 public:
 	int type;
 	SectorAddress begin;
-	int sectors;
+	uint32_t sectors;
+
+	MbrPartition();
+	~MbrPartition();
 
 	std::string toInfoString();
 };
@@ -59,9 +77,14 @@ public:
 class MbrDiskImage
 {
 public:
-	char* pBuffer;
-	int bufferSize;
-	int cursorPosition;
+	uint8_t* pBuffer;
+	int64_t bufferSize;
+	int64_t cursorPosition;
+	DriveGeometry geometry;
+	std::vector<MbrPartition> partitions;
+
+	MbrDiskImage();
+	~MbrDiskImage();
 
 	std::string toInfoString();
 };
