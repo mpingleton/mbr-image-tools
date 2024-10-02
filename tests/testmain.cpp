@@ -49,5 +49,17 @@ int main(int argc, char** argv)
 
 	cout << diskImage.toInfoString() << endl;
 
+	for (int i = 0; i < 2880; i++)
+	{
+		SectorAddress sa = SectorAddress(i);
+
+		cout << i << endl;
+		cout << "\t-> LBA: " << sa.getLBA();
+		cout << "\t-> Cyl: " << sa.getCylinder(diskImage.geometry);
+		cout << "\t-> Hed: " << sa.getHead(diskImage.geometry);
+		cout << "\t-> Sec: " << sa.getSector(diskImage.geometry);
+		cout << endl;
+	}
+
 	return 0;
 }
