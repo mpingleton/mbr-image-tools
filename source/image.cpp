@@ -12,6 +12,7 @@
 #include "../include/mbrimage.hpp"
 
 #include <iostream>
+#include <fstream>
 #include <string>
 
 using namespace std;
@@ -68,6 +69,30 @@ bool MbrDiskImage::isBootable()
 	r(&s);
 
 	return s.isBootSector();
+}
+
+void MbrDiskImage::readFile(string filename)
+{
+	ifstream file;
+	file.open(filename, ios::binary | ios::in);
+	if (!file.is_open()) throw 1;
+
+	file.read((char*)pBuffer, bufferSize);
+	if (file.fail()) throw 2;
+
+	file.close();
+}
+
+void MbrDiskImage::saveFile(string filename)
+{
+	ofstream file;
+	file.open(filename, ios::binary | ios::out);
+	if (!file.is_open()) throw 1;
+
+	file.write((char*)pBuffer, bufferSize);
+	if (file.fail()) throw 2;
+
+	file.close();
 }
 
 string MbrDiskImage::toInfoString()

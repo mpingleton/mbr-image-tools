@@ -12,6 +12,7 @@
 #include "../include/mbrimage.hpp"
 
 #include <iostream>
+#include <fstream>
 #include <string>
 
 using namespace std;
@@ -133,6 +134,30 @@ void MbrSector::setPartitionEntry(int n, MbrPartition* pPartition, DriveGeometry
 		pBuffer[offset + 8 + i] = ((uint8_t*)&lbaFirst)[i];
 		pBuffer[offset + 12 + i] = ((uint8_t*)&pPartition->sectors)[i];
 	}
+}
+
+void MbrSector::readFile(string filename)
+{
+	ifstream file;
+	file.open(filename, ios::binary | ios::in);
+	if (!file.is_open()) throw 1;
+
+	file.read((char*)pBuffer, bufferSize);
+	if (file.fail()) throw 2;
+
+	file.close();
+}
+
+void MbrSector::saveFile(string filename)
+{
+	ofstream file;
+	file.open(filename, ios::binary | ios::out);
+	if (!file.is_open()) throw 1;
+
+	file.write((char*)pBuffer, bufferSize);
+	if (file.fail()) throw 2;
+
+	file.close();
 }
 
 string MbrSector::toInfoString()

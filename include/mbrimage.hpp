@@ -68,6 +68,8 @@ public:
 	bool isBootSector();
 	bool getPartitionEntry(int n, MbrPartition* pPartition, DriveGeometry g);
 	void setPartitionEntry(int n, MbrPartition* pPartition, DriveGeometry g);
+	void readFile(std::string filename);
+	void saveFile(std::string filename);
 	std::string toInfoString();
 };
 
@@ -103,6 +105,8 @@ public:
 	void r(MbrSector* pSector);
 	void w(MbrSector* pSector);
 	bool isBootable();
+	void readFile(std::string filename);
+	void saveFile(std::string filename);
 	std::string toInfoString();
 };
 
