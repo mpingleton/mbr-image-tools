@@ -50,6 +50,8 @@ public:
 	std::string toInfoString();
 };
 
+class MbrPartition;
+
 class MbrSector
 {
 public:
@@ -64,19 +66,22 @@ public:
 
 	void initBuffer(DriveGeometry g);
 	bool isBootSector();
+	bool getPartitionEntry(int n, MbrPartition* pPartition, DriveGeometry g);
+	void setPartitionEntry(int n, MbrPartition* pPartition, DriveGeometry g);
 	std::string toInfoString();
 };
 
 class MbrPartition
 {
 public:
-	int type;
+	uint8_t type;
 	SectorAddress begin;
 	uint32_t sectors;
 
 	MbrPartition();
 	~MbrPartition();
 
+	void setActive();
 	SectorAddress absoluteAddress(uint32_t i);
 	std::string toInfoString();
 };

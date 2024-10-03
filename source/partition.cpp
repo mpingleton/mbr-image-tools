@@ -30,6 +30,11 @@ MbrPartition::~MbrPartition()
 	sectors = 0;
 }
 
+void MbrPartition::setActive()
+{
+	type = 0x01;
+};
+
 SectorAddress MbrPartition::absoluteAddress(uint32_t i)
 {
 	SectorAddress a = SectorAddress(begin.address + i);
