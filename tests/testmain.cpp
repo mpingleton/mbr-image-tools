@@ -52,13 +52,47 @@ int main(int argc, char** argv)
 	for (int i = 0; i < 2880; i++)
 	{
 		SectorAddress sa = SectorAddress(i);
-
-		cout << i << endl;
-		cout << "\t-> LBA: " << sa.getLBA();
-		cout << "\t-> Cyl: " << sa.getCylinder(diskImage.geometry);
-		cout << "\t-> Hed: " << sa.getHead(diskImage.geometry);
-		cout << "\t-> Sec: " << sa.getSector(diskImage.geometry);
+		cout << "-> LBA: " << sa.getLBA();
+		cout << "\tCyl: " << sa.getCylinder(diskImage.geometry);
+		cout << "\tHed: " << sa.getHead(diskImage.geometry);
+		cout << "\tSec: " << sa.getSector(diskImage.geometry);
 		cout << endl;
+	}
+
+	MbrPartition partition = MbrPartition();
+	partition.setActive();
+	partition.begin = SectorAddress(5);
+	partition.sectors = 2874;
+
+	MbrSector mbrSectorA = MbrSector();
+	MbrSector mbrSectorB = MbrSector();
+	mbrSectorA.address = SectorAddress(0);
+	mbrSectorA.initBuffer(diskImage.geometry);
+	mbrSectorB.address = SectorAddress(0);
+	mbrSectorB.initBuffer(diskImage.geometry);
+
+	diskImage.r(&mbrSectorA);
+	mbrSectorA.setPartitionEntry(0, &partition, diskImage.geometry);
+	diskImage.w(&mbrSectorA);
+
+	cout << "Sector written" << endl;
+
+	diskImage.r(&mbrSectorB);
+	MbrPartition p2 = MbrPartition();
+	mbrSectorB.getPartitionEntry(0, &p2, diskImage.geometry);
+	cout << p2.toInfoString() << endl;
+
+	int i = 0;
+	while (i < diskImage.geometry.bytes)
+	{
+		cout << " -> ";
+		for (int l = 0; l < 50; l++)
+		{
+			if (i >= diskImage.geometry.bytes) break;
+			cout << to_string(mbrSectorB.pBuffer[i]) << " ";
+			i++;
+		}
+		cout << endl << endl;
 	}
 
 	return 0;
